@@ -128,3 +128,35 @@ FROM `order details` o
     INNER JOIN products p USING(ProductID)
 GROUP BY ProductID
 ORDER BY PCT_OF_TOTAL_SALES DESC;
+-- 11. Find the Median Salary in Each Department
+-- Write a MySQL query to find the median salary in each department 
+-- using a window function.
+USE excercise_db;
+WITH median_salary as (
+    SELECT DEPARTMENT_ID,
+        SALARY,
+        ROW_NUMBER() OVER (
+            PARTITION BY DEPARTMENT_ID
+            ORDER BY SALARY
+        ) AS ROW_NUM,
+        COUNT(*) OVER (PARTITION BY DEPARTMENT_ID) AS DEPT_COUNT
+    FROM employees
+)
+SELECT DEPARTMENT_ID,
+    ROUND(AVG(SALARY), 2) AS DEPT_MEDIAN
+FROM median_salary
+WHERE ROW_NUM IN (
+        FLOOR((DEPT_COUNT + 1) / 2),
+        CEIL((DEPT_COUNT + 1) / 2)
+    )
+GROUP BY DEPARTMENT_ID;
+-- 12. Calculate the Salary Difference from Company Average
+-- Write a MySQL query to calculate the difference between each 
+-- employee's salary and the average salary of the entire company 
+-- using a window function.
+SELECT EMPLOYEE_ID,
+    LAST_NAME,
+    SALARY,
+    SALARY - ROUND(AVG(SALARY) OVER(), 2) AS DIFF_FROM_COMPANY_AVG
+FROM employees
+ORDER BY EMPLOYEE_ID;
