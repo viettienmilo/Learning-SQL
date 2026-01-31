@@ -80,12 +80,51 @@ ORDER BY MTH;
 -- Write a MySQL query to find the top 3 highest paid employees 
 -- in each department using a window function.
 USE excercise_db;
+WITH TOP_3_SALARY AS (
+    SELECT EMPLOYEE_ID,
+        LAST_NAME,
+        DEPARTMENT_ID,
+        SALARY,
+        DENSE_RANK() OVER (
+            PARTITION BY DEPARTMENT_ID
+            ORDER BY SALARY DESC
+        ) AS RNK
+    FROM employees
+)
+SELECT *
+FROM TOP_3_SALARY
+WHERE RNK <= 3;
+-- 8. Calculate the Salary Difference from Department Average
+-- Write a MySQL query to calculate the difference between each 
+-- employee's salary and the average salary of their department 
+-- using a window function.
 SELECT EMPLOYEE_ID,
     LAST_NAME,
     SALARY,
-    DENSE_RANK() OVER (
-        PARTITION BY DEPARTMENT_ID
-        ORDER BY SALARY DESC
-    ) AS RNK
+    SALARY - ROUND(AVG(SALARY) OVER (PARTITION BY DEPARTMENT_ID), 2) AS DIFF_FROM_DEPT_AVG
 FROM employees
-WHERE RNK <= 3;
+ORDER BY DEPARTMENT_ID;
+-- 9. Find the First and Last Sale Date for Each Customer
+-- Write a MySQL query to find the first and last sale date for 
+-- each customer using a window function.
+USE sakila;
+SELECT customer_id,
+    MIN(payment_date) AS FIRST_SALE,
+    MAX(payment_date) AS LAST_SALE
+FROM payment
+GROUP BY customer_id;
+-- 10. Calculate the Percentage of Total Sales for each Product
+-- Write a MySQL query to calculate the percentage of total sales 
+-- for each product using a window function.
+USE northwind;
+SELECT ProductID,
+    ProductName,
+    SUM(o.UnitPrice * Quantity) AS PRODUCT_SALES,
+    SUM(o.UnitPrice * Quantity) / SUM(SUM(o.UnitPrice * Quantity)) OVER() * 100 AS PCT_OF_TOTAL_SALES,
+    RANK() OVER(
+        ORDER BY SUM(o.UnitPrice * Quantity) DESC
+    ) AS SALES_RNK
+FROM `order details` o
+    INNER JOIN products p USING(ProductID)
+GROUP BY ProductID
+ORDER BY PCT_OF_TOTAL_SALES DESC;
