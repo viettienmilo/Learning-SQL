@@ -263,12 +263,14 @@ SELECT SALE_YEAR,
 FROM (
         SELECT YEAR(OrderDate) AS SALE_YEAR,
             MONTHNAME(OrderDate) AS SALE_MONTH,
+            MONTH(OrderDate) AS MONTH_NUM,
             SUM(UnitPrice * Quantity) AS MONTH_SALES
         FROM invoices
         GROUP BY YEAR(OrderDate),
-            MONTHNAME(OrderDate)
+            MONTHNAME(OrderDate),
+            MONTH(OrderDate)
     ) AS S
-ORDER BY SALE_YEAR;
+ORDER BY SALE_YEAR, MONTH_NUM;
 -- 20. Find the Employees with the Highest Salary in Each Department
 -- Write a MySQL query to find the employees with the highest salary 
 -- in each department using a window function.
