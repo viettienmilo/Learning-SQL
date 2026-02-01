@@ -160,3 +160,78 @@ SELECT EMPLOYEE_ID,
     SALARY - ROUND(AVG(SALARY) OVER(), 2) AS DIFF_FROM_COMPANY_AVG
 FROM employees
 ORDER BY EMPLOYEE_ID;
+-- 13. Using Certificates for Database Authentication
+-- Write a MySQL query to find the cumulative distribution of 
+-- sales using a window function.
+USE northwind;
+SELECT OrderID,
+    SALES,
+    CUME_DIST() OVER(
+        ORDER BY SALES
+    ) AS CUME_DIST_SALES
+FROM (
+        SELECT OrderId,
+            SUM(UnitPrice * Quantity) AS SALES
+        FROM `order details`
+        GROUP BY OrderID
+    ) AS SALE_TABLE;
+-- 14. Calculate the Percentile Rank of Each Employee's Salary
+-- Write a MySQL query to calculate the percentile rank of each 
+-- employee's salary using a window function.
+USE excercise_db;
+SELECT EMPLOYEE_ID,
+    LAST_NAME,
+    SALARY,
+    PERCENT_RANK() OVER (
+        ORDER BY SALARY
+    ) AS PERCENT_RANK_SALARY
+FROM employees
+ORDER BY SALARY;
+-- 15. Find the Lead and Lag Values for Sales
+-- Write a MySQL query to find the lead and lag values for sales 
+-- using a window function.
+USE northwind;
+SELECT OrderID,
+    SALES,
+    LAG(SALES, 1) OVER (
+        ORDER BY SALES
+    ) AS PREV_SALES,
+    LEAD(SALES, 1) OVER (
+        ORDER BY SALES
+    ) AS NEXT_SALES
+FROM (
+        SELECT OrderID,
+            SUM(UnitPrice * Quantity) AS SALES
+        FROM `order details`
+        GROUP BY OrderID
+    ) AS SALE_TABLE;
+-- 16. Calculate the Difference between Current and Next Salary
+-- Write a MySQL query to calculate the difference between the 
+-- current salary and the next salary for each employee using a 
+-- window function.
+USE excercise_db;
+SELECT EMPLOYEE_ID,
+    LAST_NAME,
+    SALARY,
+    SALARY - LEAD(SALARY, 1) OVER (
+        ORDER BY EMPLOYEE_ID
+    ) AS SAL_NEXT_DIFF
+FROM employees
+ORDER BY EMPLOYEE_ID;
+-- 17. Calculate the Cumulative Sum of Sales by Quarter
+-- Write a MySQL query to calculate the cumulative sum of sales for 
+-- each quarter using a window function.
+USE northwind;
+SELECT SALE_QTR,
+    QTR_SALES,
+    SUM(QTR_SALES) OVER (
+        ORDER BY QTR_SALES rows unbounded preceding
+    ) AS CUM_SUM_QTR_SALES
+FROM (
+        SELECT QUARTER(OrderDate) as SALE_QTR,
+            SUM(UnitPrice * Quantity) AS QTR_SALES
+        FROM `order details`
+            INNER JOIN orders USING(OrderID)
+        GROUP BY QUARTER(OrderDate)
+    ) AS SALE_TABLE
+GROUP BY SALE_QTR;
