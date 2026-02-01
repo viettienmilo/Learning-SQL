@@ -235,3 +235,55 @@ FROM (
         GROUP BY QUARTER(OrderDate)
     ) AS SALE_TABLE
 GROUP BY SALE_QTR;
+-- 18. Find the Top 5 Highest Sales by Region
+-- Write a MySQL query to find the top 5 highest sales in each region 
+-- using a window function.
+WITH sale_table AS (
+    SELECT Country,
+        UnitPrice * Quantity,
+        DENSE_RANK() OVER (
+            PARTITION BY Country
+            ORDER BY UnitPrice * Quantity DESC
+        ) AS RNK
+    FROM invoices
+)
+SELECT *
+FROM sale_table
+WHERE RNK <= 5
+ORDER BY Country;
+-- 19. Calculate the Average Sales Over a Rolling 3-Month Window
+-- Write a MySQL query to calculate the average sales over a rolling 
+-- 3-month window using a window function.
+SELECT SALE_YEAR,
+    SALE_MONTH,
+    MONTH_SALES,
+    AVG(MONTH_SALES) OVER (
+        ORDER BY SALE_MONTH rows between 1 preceding and 1 following
+    ) AS ROLL_AVG
+FROM (
+        SELECT YEAR(OrderDate) AS SALE_YEAR,
+            MONTHNAME(OrderDate) AS SALE_MONTH,
+            SUM(UnitPrice * Quantity) AS MONTH_SALES
+        FROM invoices
+        GROUP BY YEAR(OrderDate),
+            MONTHNAME(OrderDate)
+    ) AS S
+ORDER BY SALE_YEAR;
+-- 20. Find the Employees with the Highest Salary in Each Department
+-- Write a MySQL query to find the employees with the highest salary 
+-- in each department using a window function.
+USE excercise_db;
+WITH SALARY_TABLE AS (
+    SELECT EMPLOYEE_ID,
+        LAST_NAME,
+        DEPARTMENT_ID,
+        SALARY,
+        RANK() OVER (
+            PARTITION BY DEPARTMENT_ID -- ORDER BY SALARY DESC
+            ORDER BY SALARY DESC
+        ) AS RNK
+    FROM employees
+)
+SELECT *
+FROM SALARY_TABLE
+WHERE RNK = 1;
