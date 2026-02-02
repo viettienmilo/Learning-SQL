@@ -258,7 +258,7 @@ SELECT SALE_YEAR,
     SALE_MONTH,
     MONTH_SALES,
     AVG(MONTH_SALES) OVER (
-        ORDER BY SALE_MONTH rows between 1 preceding and 1 following
+        ORDER BY SALE_MONTH rows between 2 preceding and current row
     ) AS ROLL_AVG
 FROM (
         SELECT YEAR(OrderDate) AS SALE_YEAR,
@@ -270,7 +270,8 @@ FROM (
             MONTHNAME(OrderDate),
             MONTH(OrderDate)
     ) AS S
-ORDER BY SALE_YEAR, MONTH_NUM;
+ORDER BY SALE_YEAR,
+    MONTH_NUM;
 -- 20. Find the Employees with the Highest Salary in Each Department
 -- Write a MySQL query to find the employees with the highest salary 
 -- in each department using a window function.
