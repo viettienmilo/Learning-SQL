@@ -71,3 +71,79 @@ WHERE MATCH(Content) AGAINST ('analytics' IN NATURAL LANGUAGE MODE);
 SELECT *
 FROM Articles
 WHERE MATCH(Content) AGAINST ('+marketing -advertising' IN BOOLEAN MODE);
+-- 12. Updating a Row and Rerunning a Full-Text Search
+-- Write a MySQL query to update the "Content" column of a specific 
+-- article and then perform a full-text search for the updated keyword 
+-- "cloud".
+UPDATE TABLE Articles
+SET Content = 'cloud storage'
+WHERE articleId = 1;
+SELECT *
+FROM Articles
+WHERE MATCH(Content) AGAINST ('cloud');
+-- 13. Combining Full-Text Search with Sorting by Relevance
+-- Write a MySQL query to search for "cybersecurity" in the "Content" column 
+-- and order the results by their relevance score.
+SELECT *,
+    MATCH(Content) AGAINST ('cybersecurity') AS SCORE
+WHERE MATCH(Content) AGAINST ('cybersecurity')
+ORDER BY SCORE DESC;
+-- 14. Limiting Full-Text Search Results
+-- Write a MySQL query to perform a full-text search for "innovation" in the 
+-- "Content" column and limit the results to the top 10 matches.
+SELECT *,
+    MATCH(Content) AGAINST ('innvation') AS SCORE
+WHERE MATCH(Content) AGAINST ('innvation')
+ORDER BY SCORE DESC
+LIMIT 10;
+-- 15. Using Full-Text Search in a Subquery
+-- Write a MySQL query to use a subquery that retrieves ArticleIDs matching 
+-- "machine learning" and then fetch complete details for those articles.
+SELECT *
+FROM Articles
+WHERE ArticleID IN (
+        SELECT ArticleID
+        FROM Articles
+        WHERE MATCH(Content) AGAINST ('machine learning')
+    );
+-- 16. Searching for Exact Phrases Using Quoted Strings
+-- Write a MySQL query to perform a full-text search for the exact phrase 
+-- "data science" in the "Content" column using boolean mode.
+SELECT *
+FROM Articles
+WHERE MATCH(Content) AGAINST ('"data science"' IN BOOLEAN MODE);
+-- 17. Using Full-Text Search with a JOIN Query
+-- Write a MySQL query to perform a full-text search for "blockchain" in the 
+-- "Content" column of the Articles table and join with the Authors table to 
+-- retrieve author details.
+SELECT ar.*,
+    au.AuthorName
+FROM Articles ar
+    INNER JOIN Authors au ON ar.AuthorID = ar.AuthorID
+WHERE MATCH(ar.Content) AGAINST ('blockchain');
+-- 18. Full-Text Search with Custom Stopword List Consideration
+-- Write a MySQL query to perform a full-text search for "network" in the 
+-- "Content" column, considering that a custom stopword list has been applied.
+SELECT *
+FROM Articles
+WHERE MATCH (Content) AGAINST ('network');
+-- 19. Full-Text Search with Column Weighting Simulation
+-- Write a MySQL query to perform a full-text search for "technology" in both 
+-- the "Title" and "Content" columns and simulate column weighting by comparing 
+-- relevance scores.
+SELECT *,
+    MATCH(Content) AGAINST ('technology') AS CONTENT_MATCH_SCORE,
+    MATCH(Title) AGAINST ('technology') AS TITLE_MATCH_SCORE,
+    (
+        MATCH(Content) AGAINST ('technology') * 2 + MATCH(Title) AGAINST ('technology')
+    ) AS TOTAL_MATCH_SCORE
+FROM Articles
+WHERE MATCH(Content, Title) AGAINST ('technology')
+ORDER BY TOTAL_MATCH_SCORE DESC;
+-- 20. Paginating Full-Text Search Results
+-- Write a MySQL query to perform a full-text search for "innovation" in the 
+-- "Content" column and retrieve results for page 2 assuming 10 results per page.
+SELECT *
+FROM Articles
+WHERE MATCH(Content) AGAINST ('innovation')
+LIMIT 10 OFFSET 10;
