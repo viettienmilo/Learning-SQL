@@ -89,7 +89,7 @@ CREATE TABLE classes (
     cycleId varchar(10),
     classId varchar(10),
     classTitle varchar(100),
-    classDate varchar(10),
+    classDay varchar(10),
     room varchar(20),
     startTime time,
     endTime time,
@@ -137,5 +137,4 @@ CREATE TABLE test_scores (
     FOREIGN KEY (courseId, cycleId, testNo) REFERENCES tests(courseId, cycleId, testNo),
     FOREIGN KEY (studentId) REFERENCES students(studentId)
 ) ENGINE = InnoDB;
-ALTER TABLE attendance
-ADD FOREIGN KEY (studentId) REFERENCES students(studentId);
+----------------------
