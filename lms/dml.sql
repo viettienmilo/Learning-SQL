@@ -2,6 +2,12 @@ USE lms;
 SHOW VARIABLES LIKE 'secure_file_priv';
 -- students
 LOAD DATA INFILE "C:/ProgramData/MySQL/MySQL Server 9.4/Uploads/ec_k9a.csv" INTO TABLE students CHARACTER SET utf8mb4 FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED BY '"' LINES TERMINATED BY '\n' IGNORE 1 ROWS;
+-- remove \r at the end
+UPDATE students
+SET studentAddress = TRIM(
+        TRAILING '\r'
+        FROM studentAddress
+    );
 -- departments
 INSERT INTO departments
 VALUES('EC', 'Economics');
@@ -88,7 +94,7 @@ VALUES (
         'BUA3302',
         'HKII/2526',
         1,
-        'BT01',
+        'TX',
         '2026/02/07',
         NULL
     ),
@@ -96,7 +102,7 @@ VALUES (
         'BUA3302',
         'HKII/2526',
         2,
-        'BT02',
+        'BT01',
         NULL,
         NULL
     ),
@@ -104,7 +110,7 @@ VALUES (
         'BUA3302',
         'HKII/2526',
         3,
-        'TX',
+        'BT02',
         NULL,
         NULL
     );
@@ -163,6 +169,62 @@ SELECT 'BUA3302',
     'MK9A',
     studentId,
     '2026/02/03'
+FROM students;
+-----
+INSERT INTO attendance (
+        courseId,
+        cycleId,
+        classId,
+        studentId,
+        attendDate
+    )
+SELECT 'BUA3302',
+    'HKII/2526',
+    'MK9A',
+    studentId,
+    '2026/03/03'
+FROM students;
+-----
+INSERT INTO attendance (
+        courseId,
+        cycleId,
+        classId,
+        studentId,
+        attendDate
+    )
+SELECT 'BUA3302',
+    'HKII/2526',
+    'MK9A',
+    studentId,
+    '2026/03/10'
+FROM students;
+-----
+INSERT INTO attendance (
+        courseId,
+        cycleId,
+        classId,
+        studentId,
+        attendDate
+    )
+SELECT 'BUA3302',
+    'HKII/2526',
+    'MK9A',
+    studentId,
+    '2026/03/17'
+FROM students;
+-----
+INSERT INTO attendance (
+        courseId,
+        cycleId,
+        classId,
+        studentId,
+        attendDate
+    )
+SELECT 'BUA3302',
+    'HKII/2526',
+    'MK9A',
+    studentId,
+    '2026/03/24'
 FROM students;
 -----
 UPDATE attendance
@@ -234,3 +296,22 @@ WHERE attendDate = '2026/02/03'
         '24193037'
     );
 -----
+--- add all default scores to all students
+INSERT INTO test_scores (courseId, cycleId, testNo, studentId)
+SELECT 'BUA3302',
+    'HKII/2526',
+    1,
+    studentId
+FROM students;
+INSERT INTO test_scores (courseId, cycleId, testNo, studentId)
+SELECT 'BUA3302',
+    'HKII/2526',
+    2,
+    studentId
+FROM students;
+INSERT INTO test_scores (courseId, cycleId, testNo, studentId)
+SELECT 'BUA3302',
+    'HKII/2526',
+    3,
+    studentId
+FROM students;

@@ -11,7 +11,7 @@
             "port": 3306,
             "driver": "MySQL",
             "name": "MySQL",
-            "database": "sakila",
+            "database": "lms",
             "username": "root"
         }
     ]

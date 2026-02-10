@@ -132,7 +132,7 @@ CREATE TABLE test_scores (
     cycleId varchar(10),
     testNo int,
     studentId varchar(10),
-    score decimal(3, 1),
+    score decimal(3, 1) DEFAULT 0,
     PRIMARY KEY (courseId, cycleId, testNo, studentId),
     FOREIGN KEY (courseId, cycleId, testNo) REFERENCES tests(courseId, cycleId, testNo),
     FOREIGN KEY (studentId) REFERENCES students(studentId)
