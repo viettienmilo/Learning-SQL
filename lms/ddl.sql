@@ -4,17 +4,17 @@ USE lms;
  Create tables
  */
 ----------------------
-CREATE TABLE categories (
+CREATE TABLE IF NOT EXISTS categories (
     categoryId varchar(10) PRIMARY KEY,
     categoryDescription varchar(256)
-);
+) ENGINE = InnoDB;
 ----------------------
-CREATE TABLE departments (
+CREATE TABLE IF NOT EXISTS departments (
     departmentId varchar(10) PRIMARY KEY,
     departmentName varchar(100)
 ) ENGINE = InnoDB;
 ----------------------
-CREATE TABLE courses (
+CREATE TABLE IF NOT EXISTS courses (
     courseId varchar(10) PRIMARY KEY,
     courseTitle varchar(256),
     abstract text(1000),
@@ -27,7 +27,7 @@ CREATE TABLE courses (
     SET NULL
 ) ENGINE = InnoDB;
 ----------------------
-CREATE TABLE cycles (
+CREATE TABLE IF NOT EXISTS cycles (
     cycleId varchar(10) PRIMARY KEY,
     cycleDescription varchar(256),
     cycleStartDate date,
@@ -36,7 +36,7 @@ CREATE TABLE cycles (
     vacationEndDate date
 ) ENGINE = InnoDB;
 ----------------------
-CREATE TABLE courses_by_cycle (
+CREATE TABLE IF NOT EXISTS courses_by_cycle (
     courseId varchar(10),
     cycleId varchar(10),
     courseStartDate date,
@@ -46,7 +46,7 @@ CREATE TABLE courses_by_cycle (
     FOREIGN KEY (cycleId) REFERENCES cycles(cycleId) ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE = InnoDB;
 ----------------------
-CREATE TABLE students (
+CREATE TABLE IF NOT EXISTS students (
     studentId varchar(10) PRIMARY KEY,
     studentFName varchar(50),
     studentLName varchar(50),
@@ -55,7 +55,7 @@ CREATE TABLE students (
     studentAddress varchar(15)
 ) ENGINE = InnoDB;
 ----------------------
-CREATE TABLE enrollments (
+CREATE TABLE IF NOT EXISTS enrollments (
     courseId varchar(10),
     cycleId varchar(10),
     studentId varchar(10),
@@ -67,7 +67,7 @@ CREATE TABLE enrollments (
     FOREIGN KEY (studentId) REFERENCES students(studentId) ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE = InnoDB;
 ----------------------
-CREATE TABLE teachers (
+CREATE TABLE IF NOT EXISTS teachers (
     teacherId varchar(10) PRIMARY KEY,
     teacherFName varchar(50),
     teacherLName varchar(50),
@@ -75,7 +75,7 @@ CREATE TABLE teachers (
     teacherPhoneNumber varchar(15)
 ) ENGINE = InnoDB;
 ----------------------
-CREATE TABLE teachers_per_course (
+CREATE TABLE IF NOT EXISTS teachers_per_course (
     courseId varchar(10),
     cycleId varchar(10),
     teacherId varchar(10),
@@ -84,7 +84,7 @@ CREATE TABLE teachers_per_course (
     FOREIGN KEY (teacherId) REFERENCES teachers(teacherId)
 ) ENGINE = InnoDB;
 ----------------------
-CREATE TABLE classes (
+CREATE TABLE IF NOT EXISTS classes (
     courseId varchar(10),
     cycleId varchar(10),
     classId varchar(10),
@@ -97,7 +97,7 @@ CREATE TABLE classes (
     FOREIGN KEY (courseId, cycleId) REFERENCES courses_by_cycle(courseId, cycleId)
 ) ENGINE = InnoDB;
 ----------------------
-CREATE TABLE attendance (
+CREATE TABLE IF NOT EXISTS attendance (
     courseId varchar(10),
     cycleId varchar(10),
     classId varchar(10),
@@ -116,7 +116,7 @@ CREATE TABLE attendance (
     FOREIGN KEY (studentId) REFERENCES students(studentId)
 ) ENGINE = InnoDB;
 ----------------------
-CREATE TABLE tests (
+CREATE TABLE IF NOT EXISTS tests (
     courseId varchar(10),
     cycleId varchar(10),
     testNo int,
@@ -127,7 +127,7 @@ CREATE TABLE tests (
     FOREIGN KEY (courseId, cycleId) REFERENCES courses_by_cycle(courseId, cycleId)
 ) ENGINE = InnoDB;
 ----------------------
-CREATE TABLE test_scores (
+CREATE TABLE IF NOT EXISTS test_scores (
     courseId varchar(10),
     cycleId varchar(10),
     testNo int,
