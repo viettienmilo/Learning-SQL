@@ -23,7 +23,7 @@ CREATE TABLE courses (
     departmentId varchar(10),
     FOREIGN KEY (categoryId) REFERENCES categories(categoryId) ON UPDATE CASCADE ON DELETE
     SET NULL,
-        FOREIGN KEY (departmentId) REFERENCES departments(deparmentId) ON UPDATE CASCADE ON DELETE
+        FOREIGN KEY (departmentId) REFERENCES departments(departmentId) ON UPDATE CASCADE ON DELETE
     SET NULL
 ) ENGINE = InnoDB;
 ----------------------
@@ -43,7 +43,7 @@ CREATE TABLE courses_by_cycle (
     courseEndDate date,
     PRIMARY KEY (courseId, cycleId),
     FOREIGN KEY (courseId) REFERENCES courses(courseId) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (cycleId) REFERENCES courses(cycleId) ON UPDATE CASCADE ON DELETE CASCADE
+    FOREIGN KEY (cycleId) REFERENCES cycles(cycleId) ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE = InnoDB;
 ----------------------
 CREATE TABLE students (
