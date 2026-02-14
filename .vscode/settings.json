@@ -7,20 +7,6 @@
             },
             "ssh": "Disabled",
             "previewLimit": 50,
-            "server": "localhost",
-            "port": 3306,
-            "driver": "MySQL",
-            "name": "MySQL",
-            "database": "lms",
-            "username": "root"
-        },
-        {
-            "mysqlOptions": {
-                "authProtocol": "default",
-                "enableSsl": "Disabled"
-            },
-            "ssh": "Disabled",
-            "previewLimit": 50,
             "server": "mysql-viettienmilo.alwaysdata.net",
             "port": 3306,
             "sshOptions": {
@@ -31,6 +17,20 @@
             "database": "viettienmilo_lms",
             "username": "425985",
             "askForPassword": true
+        },
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "ssh": "Disabled",
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 3306,
+            "driver": "MySQL",
+            "name": "MySQL",
+            "database": "sakila",
+            "username": "root"
         }
     ]
 }
