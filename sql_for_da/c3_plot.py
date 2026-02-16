@@ -39,3 +39,8 @@ fig3.add_trace(go.Scatter(x=df3['Year'],
                           col=1)
 fig3.update_layout(title="COMPARISION BETWEEN YEARLY WOMEN/MEN SALES")
 fig3.show()
+
+df4 = pd.read_csv("sql_for_da/c3_plot_4.csv")
+fig4 = px.line(df4, x='sales_month', y='Pct_Yearly', color='kind_of_business',
+              title='PERCENTAGE OF SALES BY YEAR')
+fig4.show()
