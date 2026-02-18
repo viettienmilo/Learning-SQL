@@ -8,10 +8,12 @@ fig1 = px.line(df1, x='YEAR(sales_month)', y='SUM(sales)', color='kind_of_busine
               title='TOTAL SALES BY YEAR')
 fig1.show()
 
+
 df2 = pd.read_csv("sql_for_da/c3_plot_2.csv")
 fig2 = px.line(df2, x='YEAR(sales_month)', y='SUM(sales)', color='kind_of_business',
               title='TOTAL SALES BY YEAR')
 fig2.show()
+
 
 df3 = pd.read_csv("sql_for_da/c3_plot_3.csv")
 fig3 = make_subplots(rows=3, cols=1, subplot_titles=(
@@ -39,6 +41,7 @@ fig3.add_trace(go.Scatter(x=df3['Year'],
                           col=1)
 fig3.update_layout(title="COMPARISION BETWEEN YEARLY WOMEN/MEN SALES")
 fig3.show()
+
 
 df4 = pd.read_csv("sql_for_da/c3_plot_4.csv")
 fig4 = px.line(df4, x='sales_month', y='Pct_Yearly', color='kind_of_business',
