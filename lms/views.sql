@@ -1,7 +1,7 @@
 USE lms;
 -------------------
 -- create view for students that are absent more than 1 session
-CREATE VIEW students_absent_gt1 AS
+CREATE VIEW IF NOT EXISTS students_absent_gt1 AS
 SELECT studentId AS `STUDENT ID`,
     CONCAT(studentFName, ' ', studentLName) as FULLNAME,
     COUNT(status) AS `ABSENT TIMES`,
@@ -15,7 +15,7 @@ HAVING COUNT(status) >= 2
 ORDER BY studentLName;
 -------------------
 -- create student grades view
-CREATE VIEW student_grades AS WITH score_table AS (
+CREATE VIEW IF NOT EXISTS student_grades AS WITH score_table AS (
     SELECT studentId,
         s.studentFName AS `SURNAME`,
         s.studentLName AS `NAME`,
@@ -52,7 +52,7 @@ FROM score_table
 ORDER BY NAME;
 -------------------
 -- create updatable student score view
-CREATE VIEW updatable_tx_scores AS (
+CREATE VIEW IF NOT EXISTS updatable_tx_scores AS (
     SELECT studentId,
         s.studentFName,
         s.studentLName,
@@ -68,7 +68,7 @@ CREATE VIEW updatable_tx_scores AS (
         AND cycleId = 'HKII/2526'
         AND testNo = 1
 );
-CREATE VIEW updatable_bt01_scores AS (
+CREATE VIEW IF NOT EXISTS updatable_bt01_scores AS (
     SELECT studentId,
         s.studentFName,
         s.studentLName,
@@ -84,7 +84,7 @@ CREATE VIEW updatable_bt01_scores AS (
         AND cycleId = 'HKII/2526'
         AND testNo = 2
 );
-CREATE VIEW updatable_bt02_scores AS (
+CREATE VIEW IF NOT EXISTS updatable_bt02_scores AS (
     SELECT studentId,
         s.studentFName,
         s.studentLName,
@@ -102,7 +102,7 @@ CREATE VIEW updatable_bt02_scores AS (
 );
 -------------------
 -- create student attendance overview view
-CREATE VIEW student_attendance_overview AS (
+CREATE VIEW IF NOT EXISTS student_attendance_overview AS (
     SELECT studentId,
         s.studentFName AS `SURNAME`,
         s.studentLName AS `NAME`,
@@ -163,7 +163,7 @@ CREATE VIEW student_attendance_overview AS (
 );
 -------------------
 -- create updatable attendance 03/03/2026 view
-CREATE VIEW attendace_03_03_2026 AS (
+CREATE VIEW IF NOT EXISTS attendace_03_03_2026 AS (
     SELECT studentId,
         s.studentFName AS `SURNAME`,
         s.studentLName AS `NAME`,
@@ -182,7 +182,7 @@ CREATE VIEW attendace_03_03_2026 AS (
         AND attendDate = '2026/03/03'
 );
 -- create updatable attendance 10/03/2026 view
-CREATE VIEW attendace_10_03_2026 AS (
+CREATE VIEW IF NOT EXISTS attendace_10_03_2026 AS (
     SELECT studentId,
         s.studentFName AS `SURNAME`,
         s.studentLName AS `NAME`,
@@ -201,7 +201,7 @@ CREATE VIEW attendace_10_03_2026 AS (
         AND attendDate = '2026/03/10'
 );
 -- create updatable attendance 17/03/2026 view
-CREATE VIEW attendace_17_03_2026 AS (
+CREATE VIEW IF NOT EXISTS attendace_17_03_2026 AS (
     SELECT studentId,
         s.studentFName AS `SURNAME`,
         s.studentLName AS `NAME`,
@@ -220,7 +220,7 @@ CREATE VIEW attendace_17_03_2026 AS (
         AND attendDate = '2026/03/17'
 );
 -- create updatable attendance 24/03/2026 view
-CREATE VIEW attendace_24_03_2026 AS (
+CREATE VIEW IF NOT EXISTS attendace_24_03_2026 AS (
     SELECT studentId,
         s.studentFName AS `SURNAME`,
         s.studentLName AS `NAME`,
