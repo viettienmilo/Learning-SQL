@@ -126,3 +126,78 @@ WHERE kind_of_business IN (
     )
 ORDER BY 2,
     1;
+/*
+ Calculate the CPI (Customer Price Index)
+ */
+SELECT sales_year,
+    sales,
+    first_value(sales) OVER (
+        ORDER BY sales_year
+    ) AS index_base
+FROM (
+        SELECT YEAR(sales_month) AS sales_year,
+            SUM(sales) AS sales
+        FROM retail_sales
+        WHERE kind_of_business = "Women's clothing stores"
+        GROUP BY 1
+    ) AS T;
+/*
+ Calculate the sale change over time (%) base on CPI
+ */
+SELECT sales_year,
+    sales,
+    (
+        sales / first_value(sales) OVER (
+            ORDER BY sales_year
+        ) - 1
+    ) * 100 AS `CPI%`
+FROM (
+        SELECT YEAR(sales_month) AS sales_year,
+            SUM(sales) AS sales
+        FROM retail_sales
+        WHERE kind_of_business = "Women's clothing stores"
+        GROUP BY 1
+    ) AS T;
+/*
+ Calculate the sale change over year (%) base on CPI of
+ Women clothing stores and Men clothing stores before 
+ 31/12/2019
+ (Result IN FILE c3_plot_5.csv)
+ */
+SELECT sales_year,
+    kind_of_business,
+    sales,
+    (
+        sales / first_value(sales) OVER (
+            PARTITION BY kind_of_business
+            ORDER BY sales_year
+        ) - 1
+    ) * 100 AS `CPI%`
+FROM (
+        SELECT YEAR(sales_month) AS sales_year,
+            kind_of_business,
+            SUM(sales) AS sales
+        FROM retail_sales
+        WHERE kind_of_business IN (
+                "Women's clothing stores",
+                "Men's clothing stores"
+            )
+            AND sales_month <= '2019-12-31'
+        GROUP BY 1,
+            2
+    ) AS T;
+/*
+ Rolling times window
+ */
+/*
+ Calculate moving average of sales of 12 months of 
+ Women clothing stores
+ (Result IN FILE c3_plot_6.csv)
+ */
+SELECT sales_month,
+    sales,
+    AVG(sales) OVER (
+        ORDER BY sales_month ROWS BETWEEN 11 PRECEDING AND CURRENT ROW
+    ) AS sales_avg
+FROM retail_sales
+WHERE kind_of_business = "Women's clothing stores";

@@ -45,5 +45,18 @@ df4 = pd.read_csv("sql_for_da/c3_plot_4.csv")
 sns.lineplot(data=df4, x='sales_month', y='Pct_Yearly', hue='kind_of_business', palette=colors)
 plt.title('PERCENTAGE OF SALES BY YEAR')
 
+plt.figure()
+df5 = pd.read_csv("sql_for_da/c3_plot_5.csv")
+sns.lineplot(data=df5, x='sales_year', y='CPI%', hue='kind_of_business', palette=colors)
+plt.title('CPI BY YEAR')
+
+plt.figure()
+df6 = pd.read_csv("sql_for_da/c3_plot_6.csv")
+df6_longformat = df6.melt(id_vars = 'sales_month',
+                          value_vars = ['sales', 'sales_avg'],
+                          var_name='Types',
+                          value_name='Sales')
+sns.lineplot(data=df6_longformat, x='sales_month', y='Sales', hue='Types', palette=colors)
+plt.title('MOVING AVG (12 MONTHS) OF WOMEN CLOTHING STORES')
 
 plt.show()
