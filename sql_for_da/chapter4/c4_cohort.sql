@@ -1,8 +1,6 @@
 USE sql_da;
-
 -- create tables
 DROP TABLE IF EXISTS legislators;
-
 CREATE TABLE legislators (
     full_name varchar(256),
     first_name varchar(256),
@@ -34,9 +32,7 @@ CREATE TABLE legislators (
     id_fec_1 varchar(256),
     id_fec_2 varchar(256)
 );
-
 DROP TABLE IF EXISTS legislators_terms;
-
 CREATE TABLE legislators_terms (
     id_bioguide varchar(256),
     term_number int,
@@ -59,3 +55,61 @@ CREATE TABLE legislators_terms (
     rss_url varchar(256),
     caucus varchar(256)
 );
+-- test data
+SELECT *
+FROM legislators
+LIMIT 10;
+SELECT COUNT(*)
+FROM legislators;
+SELECT *
+FROM legislators_terms
+LIMIT 10;
+SELECT COUNT(*)
+FROM legislators_terms;
+/*
+ Basic retention analysis
+ */
+-- find the first date for each legis took office
+SELECT id_bioguide,
+    MIN(term_start) AS first_term
+FROM legislators_terms
+GROUP BY 1;
+-- calculate years of each legis retain in office
+SELECT TIMESTAMPDIFF(YEAR, a.first_term, b.term_start) AS period,
+    COUNT(DISTINCT a.id_bioguide) as cohort_retained
+FROM (
+        SELECT id_bioguide,
+            MIN(term_start) AS first_term
+        FROM legislators_terms
+        GROUP BY 1
+    ) AS a
+    INNER JOIN legislators_terms b ON a.id_bioguide = b.id_bioguide
+GROUP BY 1;
+-- calculate the percentage of cohort_retained per total cohort
+-- (total cohort = value of period 0)
+-- (result in file c4_plot_1.csv)
+SELECT period,
+    cohort_retained,
+    (
+        cohort_retained / FIRST_VALUE(cohort_retained) OVER (
+            ORDER BY period
+        )
+    ) * 100 AS pct_retained
+FROM (
+        SELECT TIMESTAMPDIFF(YEAR, a.first_term, b.term_start) AS period,
+            COUNT(DISTINCT a.id_bioguide) as cohort_retained
+        FROM (
+                SELECT id_bioguide,
+                    MIN(term_start) AS first_term
+                FROM legislators_terms
+                GROUP BY 1
+            ) AS a
+            INNER JOIN legislators_terms b ON a.id_bioguide = b.id_bioguide
+        GROUP BY 1
+    ) AS T;
+/*
+ Increase accuracy by Adjusting timeseries
+ */
+SELECT *
+FROM legislators_terms
+WHERE id_bioguide = 'A000002';
