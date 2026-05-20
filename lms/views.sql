@@ -1,22 +1,31 @@
-USE lms;
+USE viettienmilo_lms;
+
 -------------------
 -- create view for students that are absent more than 1 session
 CREATE VIEW IF NOT EXISTS students_absent_gt1 AS
-SELECT studentId AS `STUDENT ID`,
-    CONCAT(studentFName, ' ', studentLName) as FULLNAME,
-    COUNT(status) AS `ABSENT TIMES`,
+SELECT
+    studentId AS `STUDENT ID`,
+    CONCAT(studentFName, ' ', studentLName) AS FULLNAME,
+    COUNT(STATUS) AS `ABSENT TIMES`,
     COUNT(absentPermitted) AS `PERMITTED TIMES`
-FROM students
+FROM
+    students
     INNER JOIN attendance USING (studentId)
-WHERE status = 'absent'
-GROUP BY studentId,
-    status
-HAVING COUNT(status) >= 2
-ORDER BY studentLName;
+WHERE
+    STATUS = 'absent'
+GROUP BY
+    studentId,
+    STATUS
+HAVING
+    COUNT(STATUS) >= 2
+ORDER BY
+    studentLName;
+
 -------------------
 -- create student grades view
 CREATE VIEW IF NOT EXISTS student_grades AS WITH score_table AS (
-    SELECT studentId,
+    SELECT
+        studentId,
         s.studentFName AS `SURNAME`,
         s.studentLName AS `NAME`,
         co.courseTitle AS `COURSE`,
@@ -36,205 +45,279 @@ CREATE VIEW IF NOT EXISTS student_grades AS WITH score_table AS (
                 WHEN testNo = 3 THEN score
             END
         ) AS BT02
-    FROM test_scores
+    FROM
+        test_scores
         INNER JOIN students s USING (studentId)
         INNER JOIN courses co USING (courseId)
         INNER JOIN cycles cy USING (cycleId)
-    WHERE courseId = 'BUA3302'
+    WHERE
+        courseId = 'BUA3302'
         AND cycleId = 'HKII/2526'
-    GROUP BY studentId
+    GROUP BY
+        studentId
 )
-SELECT *,
+SELECT
+    *,
     (
         TX * 0.2 + BT01 * 0.15 + BT02 * 0.15
     ) AS GRADE
-FROM score_table
-ORDER BY NAME;
+FROM
+    score_table
+ORDER BY
+    NAME;
+
 -------------------
 -- create updatable student score view
 CREATE VIEW IF NOT EXISTS updatable_tx_scores AS (
-    SELECT studentId,
+    SELECT
+        studentId,
         s.studentFName,
         s.studentLName,
         courseId,
         cycleId,
         testNo,
         score AS TX
-    FROM test_scores
+    FROM
+        test_scores
         INNER JOIN students s USING (studentId)
         INNER JOIN courses co USING (courseId)
         INNER JOIN cycles cy USING (cycleId)
-    WHERE courseId = 'BUA3302'
+    WHERE
+        courseId = 'BUA3302'
         AND cycleId = 'HKII/2526'
         AND testNo = 1
 );
+
 CREATE VIEW IF NOT EXISTS updatable_bt01_scores AS (
-    SELECT studentId,
+    SELECT
+        studentId,
         s.studentFName,
         s.studentLName,
         courseId,
         cycleId,
         testNo,
         score AS BT01
-    FROM test_scores
+    FROM
+        test_scores
         INNER JOIN students s USING (studentId)
         INNER JOIN courses co USING (courseId)
         INNER JOIN cycles cy USING (cycleId)
-    WHERE courseId = 'BUA3302'
+    WHERE
+        courseId = 'BUA3302'
         AND cycleId = 'HKII/2526'
         AND testNo = 2
 );
+
 CREATE VIEW IF NOT EXISTS updatable_bt02_scores AS (
-    SELECT studentId,
+    SELECT
+        studentId,
         s.studentFName,
         s.studentLName,
         courseId,
         cycleId,
         testNo,
         score AS BT02
-    FROM test_scores
+    FROM
+        test_scores
         INNER JOIN students s USING (studentId)
         INNER JOIN courses co USING (courseId)
         INNER JOIN cycles cy USING (cycleId)
-    WHERE courseId = 'BUA3302'
+    WHERE
+        courseId = 'BUA3302'
         AND cycleId = 'HKII/2526'
         AND testNo = 3
 );
+
 -------------------
 -- create student attendance overview view
 CREATE VIEW IF NOT EXISTS student_attendance_overview AS (
-    SELECT studentId,
+    SELECT
+        studentId,
         s.studentFName AS `SURNAME`,
         s.studentLName AS `NAME`,
         co.courseTitle AS `COURSE`,
         cy.cycleDescription AS `TERM`,
         MAX(
             CASE
-                WHEN attendDate = '2026/01/13' THEN status
+                WHEN attendDate = '2026/01/13' THEN STATUS
             END
         ) AS '13/01/2026',
         MAX(
             CASE
-                WHEN attendDate = '2026/01/20' THEN status
+                WHEN attendDate = '2026/01/20' THEN STATUS
             END
         ) AS '20/01/2026',
         MAX(
             CASE
-                WHEN attendDate = '2026/01/27' THEN status
+                WHEN attendDate = '2026/01/27' THEN STATUS
             END
         ) AS '27/01/2026',
         MAX(
             CASE
-                WHEN attendDate = '2026/02/03' THEN status
+                WHEN attendDate = '2026/02/03' THEN STATUS
             END
         ) AS '03/02/2026',
         MAX(
             CASE
-                WHEN attendDate = '2026/03/03' THEN status
+                WHEN attendDate = '2026/03/03' THEN STATUS
             END
         ) AS '03/03/2026',
         MAX(
             CASE
-                WHEN attendDate = '2026/03/10' THEN status
+                WHEN attendDate = '2026/03/10' THEN STATUS
             END
         ) AS '10/03/2026',
         MAX(
             CASE
-                WHEN attendDate = '2026/03/17' THEN status
+                WHEN attendDate = '2026/03/17' THEN STATUS
             END
         ) AS '17/03/2026',
         MAX(
             CASE
-                WHEN attendDate = '2026/03/24' THEN status
+                WHEN attendDate = '2026/03/24' THEN STATUS
             END
         ) AS '24/03/2026',
         COUNT(
             CASE
-                WHEN status = 'absent' THEN 1
+                WHEN STATUS = 'absent' THEN 1
             END
         ) AS `ABSENT TOTAL`
-    FROM attendance
+    FROM
+        attendance
         INNER JOIN students s USING (studentId)
         INNER JOIN courses co USING (courseId)
         INNER JOIN cycles cy USING (cycleId)
-    WHERE courseId = 'BUA3302'
+    WHERE
+        courseId = 'BUA3302'
         AND cycleId = 'HKII/2526'
-    GROUP BY studentId
+    GROUP BY
+        studentId
 );
+
 -------------------
 -- create updatable attendance 03/03/2026 view
 CREATE VIEW IF NOT EXISTS attendace_03_03_2026 AS (
-    SELECT studentId,
+    SELECT
+        studentId,
         s.studentFName AS `SURNAME`,
         s.studentLName AS `NAME`,
         courseId AS `COURSE`,
         cycleId AS `TERM`,
         classId AS `CLASS`,
         attendDate AS '03/03/2026',
-        status AS `STATUS`,
+        STATUS AS `STATUS`,
         absentPermitted AS `PERMITTED`
-    FROM attendance
+    FROM
+        attendance
         INNER JOIN students s USING (studentId)
         INNER JOIN courses co USING (courseId)
         INNER JOIN cycles cy USING (cycleId)
-    WHERE courseId = 'BUA3302'
+    WHERE
+        courseId = 'BUA3302'
         AND cycleId = 'HKII/2526'
         AND attendDate = '2026/03/03'
 );
+
 -- create updatable attendance 10/03/2026 view
 CREATE VIEW IF NOT EXISTS attendace_10_03_2026 AS (
-    SELECT studentId,
+    SELECT
+        studentId,
         s.studentFName AS `SURNAME`,
         s.studentLName AS `NAME`,
         courseId AS `COURSE`,
         cycleId AS `TERM`,
         classId AS `CLASS`,
         attendDate AS '10/03/2026',
-        status AS `STATUS`,
+        STATUS AS `STATUS`,
         absentPermitted AS `PERMITTED`
-    FROM attendance
+    FROM
+        attendance
         INNER JOIN students s USING (studentId)
         INNER JOIN courses co USING (courseId)
         INNER JOIN cycles cy USING (cycleId)
-    WHERE courseId = 'BUA3302'
+    WHERE
+        courseId = 'BUA3302'
         AND cycleId = 'HKII/2526'
         AND attendDate = '2026/03/10'
 );
+
 -- create updatable attendance 17/03/2026 view
 CREATE VIEW IF NOT EXISTS attendace_17_03_2026 AS (
-    SELECT studentId,
+    SELECT
+        studentId,
         s.studentFName AS `SURNAME`,
         s.studentLName AS `NAME`,
         courseId AS `COURSE`,
         cycleId AS `TERM`,
         classId AS `CLASS`,
         attendDate AS '17/03/2026',
-        status AS `STATUS`,
+        STATUS AS `STATUS`,
         absentPermitted AS `PERMITTED`
-    FROM attendance
+    FROM
+        attendance
         INNER JOIN students s USING (studentId)
         INNER JOIN courses co USING (courseId)
         INNER JOIN cycles cy USING (cycleId)
-    WHERE courseId = 'BUA3302'
+    WHERE
+        courseId = 'BUA3302'
         AND cycleId = 'HKII/2526'
         AND attendDate = '2026/03/17'
 );
+
 -- create updatable attendance 24/03/2026 view
 CREATE VIEW IF NOT EXISTS attendace_24_03_2026 AS (
-    SELECT studentId,
+    SELECT
+        studentId,
         s.studentFName AS `SURNAME`,
         s.studentLName AS `NAME`,
         courseId AS `COURSE`,
         cycleId AS `TERM`,
         classId AS `CLASS`,
         attendDate AS '24/03/2026',
-        status AS `STATUS`,
+        STATUS AS `STATUS`,
         absentPermitted AS `PERMITTED`
-    FROM attendance
+    FROM
+        attendance
         INNER JOIN students s USING (studentId)
         INNER JOIN courses co USING (courseId)
         INNER JOIN cycles cy USING (cycleId)
-    WHERE courseId = 'BUA3302'
+    WHERE
+        courseId = 'BUA3302'
         AND cycleId = 'HKII/2526'
         AND attendDate = '2026/03/24'
+);
+
+-------------------
+-- create student attendance score
+DROP VIEW IF EXISTS student_attendance_score;
+
+CREATE VIEW IF NOT EXISTS student_attendance_score AS (
+    SELECT
+        studentId,
+        s.studentFName AS `SURNAME`,
+        s.studentLName AS `NAME`,
+        co.courseTitle AS `COURSE`,
+        cy.cycleDescription AS `TERM`,
+        COUNT(
+            CASE
+                WHEN STATUS = 'absent' THEN 1
+            END
+        ) AS `ABSENT TOTAL`,
+        (
+            8 - COUNT(
+                CASE
+                    WHEN STATUS = 'absent' THEN 1
+                END
+            )
+        ) AS SCORE
+    FROM
+        attendance
+        INNER JOIN students s USING (studentId)
+        INNER JOIN courses co USING (courseId)
+        INNER JOIN cycles cy USING (cycleId)
+    WHERE
+        courseId = 'BUA3302'
+        AND cycleId = 'HKII/2526'
+    GROUP BY
+        studentId
 );
